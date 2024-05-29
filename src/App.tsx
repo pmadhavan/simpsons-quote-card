@@ -1,7 +1,8 @@
 import './App.css';
+import Quotes from './Quotes.tsx';
 
 function App() {
-  return <h1>React Typescript starter Project</h1>;
+  return <Quotes />;
 }
 
 export default App;
