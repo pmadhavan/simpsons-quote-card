@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 interface CardDataProps {
     quote: string;
@@ -8,10 +8,18 @@ interface CardDataProps {
 type CardCompProps = CardDataProps & { isLoading: boolean };
 const Card = ({ quote, image, character, isLoading }: CardCompProps) => {
     const [isRevealed, setIsRevealed] = useState(false);
-    const onClick = () => {
-        setIsRevealed(!isRevealed);
+    const onClick = (e: React.KeyboardEvent | React.MouseEvent) => {
+        if (e.type === 'keydown') {
+            const event = e as React.KeyboardEvent;
+            console.log(event.key)
+            if (event.key === ' ' || event.key === 'Enter') {
+                setIsRevealed(!isRevealed);
+            }
+        } else {
+            setIsRevealed(!isRevealed);
+        }
     }
-    return <div className="card-container" onClick={onClick}>
+    return <div className="card-container" onClick={onClick} onKeyDown={onClick} role="button" tabIndex={0}>
 
         {isLoading ? <div>Loading...</div> : isRevealed ? <CardRevealed image={image} character={character} /> : <h2>{quote}</h2>}
     </div>
@@ -22,7 +30,7 @@ const CardRevealed = ({ image, character }: Pick<CardDataProps, 'image' | 'chara
     return (
         <div>
             <figure>
-                <img src={image} width={'100px'} height={'100px'} />
+                <img src={image} width={'100px'} height={'100px'} alt={character} />
                 <figcaption>{character}</figcaption>
             </figure>
         </div>
@@ -33,7 +41,6 @@ const Quotes = () => {
     const [cardData, setCardData] = useState<CardDataProps>({ quote: 'dummy', image: 'dummy', character: 'dummy' })
     const [isError, setIsError] = useState(false);
     const [isPending, setIsPending] = useState(false);
-    const [refresh, setRefresh] = useState(false);
     const getCardData = async () => {
         try {
             setIsPending(true)
